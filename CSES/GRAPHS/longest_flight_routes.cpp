@@ -6,23 +6,56 @@
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
-
 #include<bits/stdc++.h>
 using namespace std;
 #define ll long long int
+#define mod 1000000007
+
+vector<ll>graph[100005];
+ll dp[100005];
+ll vis[100005];
+
+ll dfs(ll src, ll dst)
+{
+	if(src == dst)
+	return dp[src]=1;
+	
+	if(dp[src]!=-1)
+	return dp[src];
+	
+	vis[src]=1;
+	
+	ll res=0;
+	for(auto child : graph[src])
+	{
+		if(!vis[child])
+		{			
+			res = max(res, dfs(child, dst));	
+		}
+		else
+		{
+			res = max(res, dp[child]);
+		}
+	}
+	
+	if(res==0)
+	{
+		return dp[src] = INT_MIN;
+	}	
+	else
+	{
+		return dp[src] = res+1;
+	}
+	
+	
+}
 void solve()
 {
 	ll n,m;
 	cin>>n>>m;
-	ll dis[n+1];
-	ll parent[n+1];
-	vector<ll>graph[n+1];
+	memset(dp, -1, sizeof(dp));
+	memset(vis, 0, sizeof(vis));
 	
-	for(ll i=1;i<=n;i++)
-	{
-		dis[i]=-1;
-		parent[i]=-1;
-	}
 	for(ll i=1;i<=m;i++)
 	{
 		ll u,v;
@@ -30,64 +63,34 @@ void solve()
 		graph[u].push_back(v);
 	}
 	
-	priority_queue<pair<ll,ll>>pq;
-	pq.push({0, 1});
-	dis[1]=0;
-	parent[1]=-1;
+	ll ans = dfs(1, n);
 	
-	while(!pq.empty())
-	{
-		auto cur = pq.top();
-		pq.pop();
-		ll curdis = cur.first;
-		ll curnode = cur.second;
-		
-		if(dis[curnode] > curdis)
-		continue;
-		
-		for(auto child : graph[curnode])
-		{
-			if(dis[child] < curdis +1)
-			{
-				dis[child]=curdis+1;
-				// cout<<child<<" "<<dis[child]<<"\n";
-				parent[child]=curnode;
-				pq.push({dis[child], child});
-			}
-		}
-	}
-	
-	
-	if(dis[n]==-1)
+	if(dp[n]==-1)
 	{
 		cout<<"IMPOSSIBLE\n";
 		return;
 	}
-	// for(ll i=1;i<=n;i++)
-	// {
-		// cout<<parent[i]<<" "<<dis[i]<<"\n";
-	// }
-	// cout<<dis[n]<<"\n";
-	
-	vector<ll>path;
-	ll i=n;
-	while(parent[i]!=-1)
+	else
 	{
-		// cout<<i<<" ";
-		path.push_back(i);
-		i=parent[i];
+		cout<<ans<<"\n";
 	}
-	path.push_back(1);
-	reverse(path.begin(), path.end());
-	
-	cout<<path.size()<<"\n";
-	for(ll i=0;i<path.size();i++)
+	ll node = 1;
+	while(node!=n)
 	{
-		cout<<path[i]<<" ";
+		cout<<node<<" ";
+		ll res = 0;
+		for(auto child : graph[node])
+		{
+			if(dp[child]>dp[res])
+			{
+				res = child;
+			}
+		}
+		node = res;
 	}
 	
-	
-	
+	cout<<node<<"\n";
+	// cout<<dp[n]<<"\n";
 	
 	
 	
