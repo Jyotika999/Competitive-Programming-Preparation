@@ -1,3 +1,9 @@
+// CHOICES + DECISIONS
+// KNAPSACK PATTERN
+// TIME : O(N)
+// SPACE : O(N)
+
+
 class Solution {
 public:
     
